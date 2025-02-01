@@ -5,7 +5,7 @@ from datetime import datetime
 
 meter_id = [f"meter_{i}" for i in range(1, 11)]
 url = "" 
-# TODO: add url
+# TODO: need to add url
 
 # simulate meter readings
 def generate_reading():
@@ -26,8 +26,8 @@ def send_meter_data(meter_id, reading, timestamp):
             print(f"Successfully sent data for {meter_id} at {timestamp}")
         else:
             print(f"Failed to send data for {meter_id}")
-    except Exception as e:
-        print(f"Error sending data for {meter_id}: {e}")
+    except Exception:
+        print(f"Error sending data for {meter_id}")
 
 # run the simulation
 def meter_simulation():
@@ -37,6 +37,7 @@ def meter_simulation():
         reading = generate_reading()
         send_meter_data(meter_id, timestamp, reading)
         time.sleep(5)
+        # TODO: need to confirm the sending interval
 
 if __name__ == "__main__":
     meter_simulation()
