@@ -20,6 +20,7 @@ user_layout = html.Div([
         value="day",
         inline=True,
     ),
+    html.Button("Fetch Data", id="fetch_user_data", n_clicks=0),
     dcc.Graph(id="user_chart")
 ])
 
@@ -53,12 +54,13 @@ app.layout = html.Div([
 # In the user page, draw line plots
 @app.callback(
     Output("user_chart", "figure"),
+    Input("fetch_user_data", "n_clicks"),
     Input("user_id", "value"),
     Input("user_timeframe", "value")
 )
-def user_chart(user_id, timeframe):
+def user_chart(n_clicks, user_id, timeframe):
     if not user_id:
-        return px.line(title="Inoput User ID")
+        return px.line(title="Input User ID")
 
     response = requests.get(f"{url}/user/getData", params={"user_id": user_id})
     if response.status_code != 200:
