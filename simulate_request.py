@@ -3,8 +3,9 @@ import time
 import requests
 from datetime import datetime, timedelta
 
-user_data_list = [[str(i).zfill(8), 0] for i in range(1, 10)]
-url = "http://127.0.0.1:5000/meter/sendReading"
+user_data_list = []
+send_reading_url = "http://127.0.0.1:5000/meter/sendReading"
+register_url = "http://127.0.0.1:5000/register"
 
 # simulate meter readings
 # def generate_reading():
@@ -22,7 +23,7 @@ def send_meter_data(user_id, reading, timestamp):
 	}
 
 	try:
-		response = requests.post(url, json=params)
+		response = requests.post(send_reading_url, json=params)
 		if response.status_code == 200:
 			print(f"Successfully sent data for {user_id} at {timestamp}")
 		else:
@@ -30,9 +31,31 @@ def send_meter_data(user_id, reading, timestamp):
 	except Exception as e:
 		print(f"Error sending data for {user_id},{e}")
 
+# send register to server
+
+
+def send_register(username, area):
+	params = {
+		"username": username,
+		"area": area
+	}
+
+	try:
+		response = requests.post(register_url, json=params)
+		if response.status_code == 200:
+			print(f"Successfully sent data: {username},{area}")
+			receive_data = response.json()
+			user_id = receive_data['user_id']
+			user_data_list.append([user_id, 0])
+			print(user_data_list)
+
+		else:
+			print(f"Failed to send data for {username},{area}")
+	except Exception as e:
+		print(f"Error sending data for {username},{area},{e}")
+
+
 # run the simulation
-
-
 def meter_simulation(time_start_str, time_end_str):
 	format_str = "%Y-%m-%d %H:%M:%S"
 	time_start = datetime.strptime(time_start_str, format_str)
@@ -53,16 +76,21 @@ def meter_simulation(time_start_str, time_end_str):
 				send_meter_data(user_id, reading, timestamp)
 		new_time = new_time + timedelta(minutes=30)
 	print(new_time)
-	time.sleep(0.2)
 
-	# while True:
-	# 	# meter_id = random.choice(meter_id)
-	# 	timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-	# 	print(timestamp)
-	# 	reading = generate_reading()
-	# 	send_meter_data("00000001", timestamp, reading)
-	# 	time.sleep(5)
-		# TODO: need to confirm the sending interval
+
 if __name__ == "__main__":
-	# send_meter_data("00000001",200,"2024-11-24 05:00:00")
+
+	# 注册用户
+	send_register("Alice Johnson", "Orchard Road")
+	send_register("Bob Smith", "Marina Bay")
+	send_register("Charlie Brown", "Sentosa")
+	send_register("Diana White", "Orchard Road")
+	send_register("Ethan Davis", "Marina Bay")
+	send_register("Fiona Wilson", "Sentosa")
+	send_register("George Taylor", "Sentosa")
+	send_register("Hannah Clark", "Marina Bay")
+	send_register("Isaac Lewis", "Orchard Road")
+	send_register("Jack Martin", "Orchard Road")
+
+	# 发送读数
 	meter_simulation("2024-12-29 05:00:00", "2025-1-10 22:00:00")
