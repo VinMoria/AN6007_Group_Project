@@ -116,7 +116,7 @@ def admin_get_raw_():
 
 
 # 允许管理员获取UserID和AreaID的目录，用于筛选时显示全量
-@app.route('/admin/catalogue')
+@app.route('/admin/catalogue', methods=["GET"])
 def admin_get_catalogue():
 	try:
 		global user_id_set
