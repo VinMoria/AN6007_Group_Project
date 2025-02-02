@@ -14,6 +14,9 @@ user_dict = {
 	# "00000001":user_object,
 }
 
+user_id_set = set()
+area_set = set()
+
 # 存储底层数据的dataframe
 raw_df = pd.DataFrame(
 	columns=['user_id', 'area', "username", 'timestamp', 'reading'])
@@ -49,6 +52,11 @@ def register():
 		user_dict[new_user_id] = new_user
 		print(user_dict)
 
+		# 注册在目录中
+		user_id_set.add(new_user_id)
+		area_set.add(area)
+
+
 		# 返回用户ID
 		return jsonify({'user_id': new_user_id, 'status': 'success'})
 	except Exception as e:
@@ -74,7 +82,7 @@ def meter_send_reading():
 		return jsonify({'status': 'error', 'message': str(e)})
 
 
-# 获取用户数据
+# 获取用户数据，用于用户dashboard界面
 @app.route('/user/getData', methods=['GET'])
 def get_user_data():
 	try:
@@ -85,8 +93,38 @@ def get_user_data():
 		return jsonify(ans)
 	except Exception as e:
 		return jsonify({'status': 'error', 'message': str(e)})
+	
+
+
+#TODO 管理员相关的功能可以放到后面再说
+# 允许管理员根据筛选条件获取csv的原始数据
+@app.route('/admin/getRaw',methods=["POST"])
+def admin_get_raw_():
+	try:
+		global raw_df
+		receive_data = request.get_json()
+		# TODO 根据传入的参数进行筛选
+
+		# 生成csv文件
+		os.makedirs("temp", exist_ok=True)
+		file_path = "temp/raw_data.csv"
+		raw_df.to_csv(file_path, index=False)
+		return send_file(file_path, as_attachment=True)
+	
+	except Exception as e:
+		return jsonify({'status': 'error', 'message': str(e)})
+
+
+# 允许管理员获取UserID和AreaID的目录，用于筛选时显示全量
+@app.route('/admin/catalogue')
+def admin_get_catalogue():
+	try:
+		global user_id_set
+		global area_set
+		return jsonify({'user_id_set': list(user_id_set), 'area_set': list(area_set)})
+	except Exception as e:
+		return jsonify({'status': 'error', 'message': str(e)})
 
 
 if __name__ == '__main__':
 	app.run(debug=True)
-	print("Hello")

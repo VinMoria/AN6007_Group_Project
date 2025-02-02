@@ -21,7 +21,7 @@ class User:
 		self.month_usage_history = deque(maxlen=12)  # 12 months
 
 	def receive_reading(self, timestamp, reading):
-		# 根据读数更新最新用量和历史用量
+		# TODO 根据读数更新最新用量和历史用量
 		print(timestamp, reading)
 		pass
 
