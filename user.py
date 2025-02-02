@@ -1,7 +1,6 @@
 from collections import deque
 from datetime import datetime
 
-
 class User:
 	def __init__(self, username, area, user_id):
 		self.username = username
@@ -24,8 +23,9 @@ class User:
 		self.week_usage_history = deque(maxlen=6)  # 52 weeks
 		self.month_usage_history = deque(maxlen=12)  # 12 months
 
+	# 根据读数更新最新用量和历史用量
 	def receive_reading(self, timestamp, reading):
-		# TODO 根据读数更新最新用量和历史用量
+		
 		if self.latest_timestamp is None:
 			self.latest_timestamp = timestamp
 			self.latest_reading = reading
@@ -68,7 +68,11 @@ class User:
 		else:
 			self.month_usage_history.append(self.latest_month_usage)
 			self.latest_month_usage = usage_diff
+
+		self.latest_reading = reading
+		self.latest_timestamp = timestamp
 		
+
 	# 获取User的数据，用于dashboard
 	def get_data(self):
 		res = {
