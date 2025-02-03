@@ -4,7 +4,7 @@ import pandas as pd
 import plotly.express as px
 
 app = dash.Dash(__name__)
-url = "http://127.0.0.1:5000"
+url = "http://127.0.0.1:1145"
 
 # user page
 user_layout = html.Div([
@@ -58,7 +58,7 @@ app.layout = html.Div([
     Input("user_id", "value"),
     Input("user_timeframe", "value")
 )
-def user_chart(n_clicks, user_id, timeframe):
+def user_chart(user_id, timeframe):
     if not user_id:
         return px.line(title="Input User ID")
 

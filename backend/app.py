@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify, render_template, send_file, send_from_directory
-from user import User
+from backend.user import User
 import json
 import os
 import pandas as pd
