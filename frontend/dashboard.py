@@ -2,9 +2,15 @@ from dash import dash, dcc, html, Input, Output
 import requests
 import pandas as pd
 import plotly.express as px
+import json
+import os
 
+# use config.json to get the url
+config_path = os.getenv("CONFIG_PATH", "config.json")
+with open(config_path, "r") as f:
+    config = json.load(f)
+url = config["backend_url"]
 app = dash.Dash(__name__)
-url = "http://127.0.0.1:1145"
 
 # user page
 user_layout = html.Div([
