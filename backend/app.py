@@ -26,9 +26,9 @@ app = Flask(__name__)
 
 
 # 首页
-@app.route('/')
-def index():
-	return render_template('index.html')
+# @app.route('/')
+# def index():
+# 	return render_template('index.html')
 
 
 # 新用户注册
