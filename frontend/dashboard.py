@@ -86,6 +86,7 @@ app.layout = html.Div([
 ])
 
 
+
 # User page callback
 # In the user page, draw line plots
 @app.callback(
@@ -119,7 +120,6 @@ def user_chart(user_id, timeframe):
     ) 
     # 上面是问的gpt，怎么在 Plotly 图表中实现光标悬停时显示数据
     return plot
-
 
 
 
@@ -206,6 +206,7 @@ def download_csv(n_clicks, start_date, end_date, timeframe, area):
             return f"data:text/csv;charset=utf-8,{csv}"
         
     return ""  # If no CSV, return empty string
+
 
 
 if __name__ == "__main__":
