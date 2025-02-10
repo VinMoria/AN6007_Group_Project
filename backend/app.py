@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify, send_file
 import os
 import pandas as pd
 from UserService import UserService
+from io import BytesIO
 
 
 # 初始化服务
@@ -70,27 +71,30 @@ def get_user_data():
 	
 
 
-#TODO 管理员相关的功能可以放到后面再说
-# 允许管理员根据筛选条件获取csv的原始数据
-@app.route('/admin/getRaw',methods=["POST"])
+
+# 允许管理员获取csv的原始数据
+@app.route('/admin/getRaw',methods=["GET"])
 def admin_get_raw_():
 	try:
-		pass
-		# global raw_df
-		# receive_data = request.get_json()
-
-		# # 生成csv文件
-		# os.makedirs("temp", exist_ok=True)
-		# file_path = "temp/raw_data.csv"
-		# raw_df.to_csv(file_path, index=False)
-		# return send_file(file_path, as_attachment=True)
+		# 使用 BytesIO 替代 StringIO
+		buffer = BytesIO()
+		user_service.raw_df.to_csv(buffer, index=False)
+		
+		# 将指针移到开始
+		buffer.seek(0)
+		
+		return send_file(
+			buffer,
+			mimetype='text/csv',
+			as_attachment=True,
+			download_name='raw_data.csv'
+		)
 	
 	except Exception as e:
 		return jsonify({'status': 'error', 'message': str(e)})
 
 
 # 允许管理员获取UserID和AreaID的目录，用于筛选时显示全量
-# 这个API就这样吧，你就不用管user_id_set了，就用area_set就行
 @app.route('/admin/catalogue', methods=["GET"])
 def admin_get_catalogue():
 	try:
