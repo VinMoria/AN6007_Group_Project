@@ -74,7 +74,7 @@ class User:
 		
 
 	# 获取User的数据，用于dashboard
-	def get_data(self):
+	def get_display_data(self):
 		res = {
 			"username": self.username,
 			"area": self.area,
@@ -87,3 +87,4 @@ class User:
 			"month_usage_history": list(self.month_usage_history),
 		}
 		return res
+		
