@@ -75,27 +75,45 @@ def get_user_data():
 @app.route('/admin/getRaw',methods=["POST"])
 def admin_get_raw_():
 	try:
-		global raw_df
-		receive_data = request.get_json()
-		# TODO 根据传入的参数进行筛选
+		pass
+		# global raw_df
+		# receive_data = request.get_json()
 
-		# 生成csv文件
-		os.makedirs("temp", exist_ok=True)
-		file_path = "temp/raw_data.csv"
-		raw_df.to_csv(file_path, index=False)
-		return send_file(file_path, as_attachment=True)
+		# # 生成csv文件
+		# os.makedirs("temp", exist_ok=True)
+		# file_path = "temp/raw_data.csv"
+		# raw_df.to_csv(file_path, index=False)
+		# return send_file(file_path, as_attachment=True)
 	
 	except Exception as e:
 		return jsonify({'status': 'error', 'message': str(e)})
 
 
 # 允许管理员获取UserID和AreaID的目录，用于筛选时显示全量
+# 这个API就这样吧，你就不用管user_id_set了，就用area_set就行
 @app.route('/admin/catalogue', methods=["GET"])
 def admin_get_catalogue():
 	try:
-		global user_id_set
-		global area_set
+		user_id_set = user_service.user_id_set
+		area_set = user_service.area_set
 		return jsonify({'user_id_set': list(user_id_set), 'area_set': list(area_set)})
+	except Exception as e:
+		return jsonify({'status': 'error', 'message': str(e)})
+	
+@app.route('/admin/query', methods=["POST"])
+def admin_query():
+	try:
+		# 解析入参
+		receive_data = request.get_json()
+		start_time = receive_data['start_time']
+		end_time = receive_data['end_time']
+		area = receive_data['area']
+		period_type = receive_data['period_type']
+
+		#查询数据
+		ans = user_service.admin_query(start_time, end_time, area, period_type)
+		return jsonify({'status': 'success', 'data': ans})
+	
 	except Exception as e:
 		return jsonify({'status': 'error', 'message': str(e)})
 

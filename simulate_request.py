@@ -1,5 +1,6 @@
 import random
 import requests
+import time
 from datetime import datetime, timedelta
 
 user_data_list = []
@@ -65,6 +66,7 @@ def meter_simulation(time_start_str, time_end_str):
 				user_data[1] = reading
 				send_meter_data(user_id, reading, timestamp)
 		new_time = new_time + timedelta(minutes=30)
+		# time.sleep(0.2)
 	print(new_time)
 
 
@@ -83,4 +85,5 @@ if __name__ == "__main__":
 	send_register("Jack Martin", "Orchard Road")
 
 	# 发送读数
-	meter_simulation("2024-12-29 05:00:00", "2025-1-10 22:00:00")
+	# meter_simulation("2025-01-05 05:00:00", "2025-02-10 22:00:00")
+	meter_simulation("2025-02-09 05:00:00", "2025-02-10 22:00:00")
