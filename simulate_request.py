@@ -1,18 +1,10 @@
 import random
-import time
 import requests
 from datetime import datetime, timedelta
 
 user_data_list = []
 send_reading_url = "http://127.0.0.1:5000/meter/sendReading"
-register_url = "http://127.0.0.1:5000/register"
-
-# simulate meter readings
-# def generate_reading():
-# 	meter_reading = random.randint(200, 600)
-# 	return meter_reading
-
-# send meter data to the server
+register_url = "http://127.0.0.1:5000/user/register"
 
 
 def send_meter_data(user_id, reading, timestamp):
@@ -32,8 +24,6 @@ def send_meter_data(user_id, reading, timestamp):
 		print(f"Error sending data for {user_id},{e}")
 
 # send register to server
-
-
 def send_register(username, area):
 	params = {
 		"username": username,

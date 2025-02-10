@@ -1,11 +1,12 @@
-import User
+from User import User
 import pandas as pd
 
 
-class Service:
+class UserService:
 	# 自增的生成ID
 
 	def __init__(self):
+		print("UserService init")
 		self.current_id = 0
 
 		# 存储用户的dictionary
@@ -21,7 +22,6 @@ class Service:
 
 	def register(self, username, area):
 		# 生成用户ID
-
 		self.current_id += 1
 		new_user_id = str(self.current_id).zfill(8)
 

@@ -1,19 +1,17 @@
-from flask import Flask, request, jsonify, render_template, send_file, send_from_directory
-import json
+from flask import Flask, request, jsonify, send_file
 import os
 import pandas as pd
-from Service import Service
-
+from UserService import UserService
 
 
 # 初始化服务
-service = Service()
-
+user_service = UserService()
 app = Flask(__name__)
 
 
 # 新用户注册
-@app.route('/register', methods=['POST'])
+@app.route('/user/register', methods=['POST'])
+
 def register():
 	global current_id
 	global user_dict
@@ -25,7 +23,7 @@ def register():
 		area = receive_data['area']
 
 		# 注册用户
-		new_user_id = service.register(username, area)
+		new_user_id = user_service.register(username, area)
 
 		# 返回用户ID
 		return jsonify({'user_id': new_user_id, 'status': 'success'})
@@ -46,7 +44,7 @@ def meter_send_reading():
 		user_id = receive_data['user_id']
 
 		# 更新用户数据	
-		service.receive_reading(user_id, timestamp, reading)
+		user_service.receive_reading(user_id, timestamp, reading)
 
 		return jsonify({'status': 'success'})
 	except Exception as e:
@@ -62,7 +60,7 @@ def get_user_data():
 		user_id = request.args.get('user_id')
 
 		# 获取用户数据
-		user_data = service.get_user_display_data(user_id)
+		user_data = user_service.get_user_display_data(user_id)
 
 		# 组装返回数据
 		ans = dict(user_data, **{'status': 'success'})
