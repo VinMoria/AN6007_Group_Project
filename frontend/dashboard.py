@@ -210,7 +210,5 @@ def download_csv(n_clicks, start_date, end_date, timeframe, area):
         
     return ""  # If no CSV, return empty string
 
-
-
 if __name__ == "__main__":
     app.run_server(debug=True)

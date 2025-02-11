@@ -6,8 +6,8 @@ Server: 33468
 Docker: 8000
 
 ## Frontend Dashboard
-Local Test: 5050
+Local Test: 8050
 
 Server: 33467
 
-Docker: 8080
+Docker: 8050
