@@ -6,8 +6,8 @@ import json
 import os
 
 # use config.json to get the url
-config_path = os.getenv("CONFIG_PATH", "config.json")
-with open(config_path, "r") as f:
+# config_path = os.getenv("CONFIG_PATH", "config.json")
+with open("config.json", "r") as f:
     config = json.load(f)
 url = config["backend_url"]
 app = dash.Dash(__name__)
@@ -49,10 +49,11 @@ admin_layout = html.Div([
     # Function 2: time dimension selection
     dcc.RadioItems(
         id="admin_timeframe",
+        # TODO: 我这里改了，值定义的是 D, W, M
         options=[
-            {"label": "Daily", "value": "day"},
-            {"label": "Weekly", "value": "week"},
-            {"label": "Monthly", "value": "month"},
+            {"label": "Daily", "value": "D"},
+            {"label": "Weekly", "value": "W"},
+            {"label": "Monthly", "value": "M"},
         ],
         value="month",  # default to monthly dimension
         inline=True,
@@ -86,7 +87,6 @@ app.layout = html.Div([
 ])
 
 
-
 # User page callback
 # In the user page, draw line plots
 @app.callback(
@@ -95,7 +95,7 @@ app.layout = html.Div([
     Input("user_id", "value"),
     Input("user_timeframe", "value")
 )
-def user_chart(user_id, timeframe):
+def user_chart(n_clicks, user_id, timeframe):
     if not user_id:
         return px.line(title="Input User ID")
 
@@ -135,6 +135,7 @@ def get_area_options(start_date, end_date):
     # get all the available areas from backend data
     response = requests.get(f"{url}/admin/catalogue", params={"start_date": start_date, "end_date": end_date})
     # TODO: 我是根据app.py写上面的的api，可能要麻烦曹老爷你核对一下对不对
+    # 这个可以了
     if response.status_code == 200:
         data = response.json()
         areas = data.get('area_set', [])
@@ -151,9 +152,11 @@ def get_area_options(start_date, end_date):
     Input("admin_area_dropdown", "value")
 )
 def admin_data(start_date, end_date, timeframe, area):
+    print(start_date, end_date, timeframe, area)
     # Send the selected filters to the backend to get all the data
     response = requests.get(f"{url}/admin/getRaw", params={
         # TODO: 我是根据app.py写上面的的api，可能要麻烦曹老爷你核对一下对不对
+        # 这里有个问题，你选完日期之后要组装时间 2024-11-25 00:00:00 -> 2025-01-02 23:59:59 这样，这个时间范围才是对的
         "start_date": start_date,
         "end_date": end_date,
         "timeframe": timeframe,
