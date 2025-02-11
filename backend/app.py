@@ -70,8 +70,6 @@ def get_user_data():
 		return jsonify({'status': 'error', 'message': str(e)})
 	
 
-
-
 # 允许管理员获取csv的原始数据
 @app.route('/admin/getRaw',methods=["GET"])
 def admin_get_raw_():
