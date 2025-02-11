@@ -1,13 +1,17 @@
 from flask import Flask, request, jsonify, send_file
-import os
-import pandas as pd
 from UserService import UserService
 from io import BytesIO
+from apscheduler.schedulers.background import BackgroundScheduler
 
 
 # 初始化服务
 user_service = UserService()
 app = Flask(__name__)
+
+# 创建定时任务
+scheduler = BackgroundScheduler()
+scheduler.add_job(func=user_service.store_data, trigger="interval", seconds=5)
+scheduler.start()
 
 
 # 新用户注册
@@ -121,4 +125,7 @@ def admin_query():
 
 
 if __name__ == '__main__':
-	app.run(debug=True)
+	try:
+		app.run(debug=True)
+	finally:
+		scheduler.shutdown()
