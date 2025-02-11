@@ -19,9 +19,9 @@ class User:
 		self.latest_month_usage = 0
 
 		# 记录历史用量 （滑动窗口，队列）
-		self.day_usage_history = deque(maxlen=30)  # 30 days
-		self.week_usage_history = deque(maxlen=6)  # 52 weeks
-		self.month_usage_history = deque(maxlen=12)  # 12 months
+		self.day_usage_history = deque(maxlen=10)
+		self.week_usage_history = deque(maxlen=10)
+		self.month_usage_history = deque(maxlen=10)
 
 	# 根据读数更新最新用量和历史用量
 	def receive_reading(self, timestamp, reading):
