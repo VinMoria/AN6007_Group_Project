@@ -1,8 +1,9 @@
 ## Docker运行 API 服务器
 ```shell
-docker run -d -p 5000:8000 an6007groupproject:latest
+docker pull redcomet720/an6007-group-project-api-server:latest
+docker run -d -p 33468:8000 redcomet720/an6007-group-project-api-server:latest
 ```
 ## Dashboard运行
 ```shell
-docker run -d -p 8050 dashboard 
+docker run -d -p 33467:8080 dashboard 
 ```

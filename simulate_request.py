@@ -1,11 +1,11 @@
 import random
 import requests
-import time
 from datetime import datetime, timedelta
 
 user_data_list = []
-send_reading_url = "http://127.0.0.1:5000/meter/sendReading"
-register_url = "http://127.0.0.1:5000/user/register"
+server_ip = "18.136.213.100:33468"
+send_reading_url = f"http://{server_ip}/meter/sendReading"
+register_url = f"http://{server_ip}/user/register"
 
 
 def send_meter_data(user_id, reading, timestamp):
@@ -85,5 +85,5 @@ if __name__ == "__main__":
 	send_register("Jack Martin", "Orchard Road")
 
 	# 发送读数
-	# meter_simulation("2025-01-05 05:00:00", "2025-02-10 22:00:00")
-	meter_simulation("2025-02-09 05:00:00", "2025-02-10 22:00:00")
+	meter_simulation("2024-11-05 05:00:00", "2025-02-10 22:00:00")
+	# meter_simulation("2025-02-09 05:00:00", "2025-02-10 22:00:00")
