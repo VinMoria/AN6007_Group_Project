@@ -16,6 +16,7 @@ class UserService:
                     # "00000001":user_object,
 		}
 
+		# TODO: 需要数据恢复
 		self.user_id_set = set()
 		self.area_set = set()
 

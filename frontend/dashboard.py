@@ -7,12 +7,12 @@ import os
 
 # use config.json to get the url
 # config_path = os.getenv("CONFIG_PATH", "config.json")
-'''
+
 with open("config.json", "r") as f:
     config = json.load(f)
 url = config["backend_url"]
-'''
-url = "http://127.0.0.1:5050" # test
+
+# url = "http://127.0.0.1:5050" # test
 app = dash.Dash(__name__)
 
 
