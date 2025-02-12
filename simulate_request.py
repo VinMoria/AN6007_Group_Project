@@ -65,7 +65,7 @@ def meter_simulation(time_start_str, time_end_str):
 				timestamp = new_time.strftime("%Y-%m-%d %H:%M:%S")
 				user_data[1] = reading
 				send_meter_data(user_id, reading, timestamp)
-		new_time = new_time + timedelta(minutes=30)
+		new_time = new_time + timedelta(hours=4)
 		# time.sleep(0.2)
 	print(new_time)
 
@@ -75,14 +75,14 @@ if __name__ == "__main__":
 	# 注册用户
 	send_register("Alice Johnson", "Orchard Road")
 	send_register("Bob Smith", "Marina Bay")
-	send_register("Charlie Brown", "Sentosa")
-	send_register("Diana White", "Orchard Road")
-	send_register("Ethan Davis", "Marina Bay")
-	send_register("Fiona Wilson", "Sentosa")
-	send_register("George Taylor", "Sentosa")
-	send_register("Hannah Clark", "Marina Bay")
-	send_register("Isaac Lewis", "Orchard Road")
-	send_register("Jack Martin", "Orchard Road")
+	# send_register("Charlie Brown", "Sentosa")
+	# send_register("Diana White", "Orchard Road")
+	# send_register("Ethan Davis", "Marina Bay")
+	# send_register("Fiona Wilson", "Sentosa")
+	# send_register("George Taylor", "Sentosa")
+	# send_register("Hannah Clark", "Marina Bay")
+	# send_register("Isaac Lewis", "Orchard Road")
+	# send_register("Jack Martin", "Orchard Road")
 
 	# 发送读数
 	meter_simulation("2024-11-25 05:00:00", "2025-01-02 22:00:00")
