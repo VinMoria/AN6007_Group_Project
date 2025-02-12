@@ -7,11 +7,11 @@ import os
 
 # use config.json to get the url
 # config_path = os.getenv("CONFIG_PATH", "config.json")
-'''
-with open("config.json", "r") as f:
-    config = json.load(f)
-url = config["backend_url"]
-'''
+
+# with open("config.json", "r") as f:
+#     config = json.load(f)
+# url = config["backend_url"]
+# 下面这个只用于我测试这个dashboard，实际应该是上面三行代码取消注释，下面这行url注释掉
 url = "http://127.0.0.1:5050" # test
 app = dash.Dash(__name__)
 
@@ -125,8 +125,8 @@ app.layout = html.Div([
     Input("user_timeframe", "value")
 )
 def user_chart(n_clicks, user_id, timeframe):
-    start_date = "2024-11-25 05:00:00"
-    end_date = "2025-01-02 22:00:00"
+    start_date = "2024-11-25"
+    end_date = "2025-01-02"
     if not user_id:
         return px.line(title="Input User ID")
 
@@ -138,17 +138,23 @@ def user_chart(n_clicks, user_id, timeframe):
     
     if timeframe == "day":
         usage_history = data["day_usage_history"]
-        time_range = pd.date_range(start=start_date, end=end_date, freq='D')
+        latest_usage = data["latest_day_usage"]
+        time_range = pd.date_range(start=start_date, end=end_date, freq='D')     
     elif timeframe == "week":
         usage_history = data["week_usage_history"]
+        latest_usage = data["latest_week_usage"]
         time_range = pd.date_range(start=start_date, end=end_date, freq='W')
     elif timeframe == "month":
         usage_history = data["month_usage_history"]
-        time_range = pd.date_range(start=start_date, end=end_date, freq='M')
+        latest_usage = data["latest_month_usage"]
+        time_range = pd.date_range(start=start_date, end=end_date, freq='M')   
     else:
         return px.line(title="Invalid Timeframe")
     
     df = pd.DataFrame({timeframe: time_range[:len(usage_history)], "usage": usage_history})
+    df_latest = pd.DataFrame({timeframe: [time_range[-1]], "usage": latest_usage})
+    df = pd.concat([df, df_latest], ignore_index=True)
+
     plot = px.bar(df, x=timeframe, y="usage", title=f"{data['username']}'s Electricity Consumption")
     # history data uses light blue, the latest data uses dark blue
     plot.update_traces(marker_color=["#ADD8E6"] * len(usage_history) + ["#4682B4"])
