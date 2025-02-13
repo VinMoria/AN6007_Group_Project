@@ -95,14 +95,14 @@ def user_chart(n_clicks, user_id, timeframe):
     
     # 将二维数组转换为DataFrame
     df = pd.DataFrame(usage_history, columns=["date", "usage"])
-    # 将日期字符串转换为datetime类型
-    df["date"] = pd.to_datetime(df["date"])
     
     plot = px.bar(df, x="date", y="usage", title=f"{data['username']}'s Electricity Consumption")
     # history data uses light blue
     plot.update_traces(marker_color="#ADD8E6")
     # 保持原有的hover样式
     plot.update_traces(hovertemplate="<b>Time: </b>%{x}<br><b>Usage: </b>%{y}<br><extra></extra>")
+    # 设置X轴为分类轴，保持字符串格式
+    plot.update_xaxes(type='category')
     return plot
 
 
