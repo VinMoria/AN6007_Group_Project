@@ -1,77 +1,38 @@
 from collections import deque
 from datetime import datetime
 
+
 class User:
 	def __init__(self, username, area, user_id):
 		self.username = username
 		self.area = area
 		self.user_id = user_id
 
-		# 记录上次接受的时刻， 用于判断是否跨时间段
-		self.latest_timestamp = None
+		# 记录当前是哪一天
+		self.current_day_timestamp = None
 
-		# 最新读数
-		self.latest_reading = 0
-
-		# 记录最新用量
-		self.latest_day_usage = 0
-		self.latest_week_usage = 0
-		self.latest_month_usage = 0
+		# 记录一天最早和最晚的读数
+		self.day_first_reading = None
+		self.day_latest_reading = None
 
 		# 记录历史用量 （滑动窗口，队列）
 		self.day_usage_history = deque(maxlen=10)
 		self.week_usage_history = deque(maxlen=10)
 		self.month_usage_history = deque(maxlen=10)
 
-	# 根据读数更新最新用量和历史用量
+
+	# 读数只记录一天最早和最晚的记录
 	def receive_reading(self, timestamp, reading):
-		
-		if self.latest_timestamp is None:
-			self.latest_timestamp = timestamp
-			self.latest_reading = reading
-			return
+		if self.day_first_reading is None:
+			self.day_first_reading = reading
+			self.day_latest_reading = reading
 
-		# 将字符串转换为 datetime 对象
-		format_str = "%Y-%m-%d %H:%M:%S"
-		time1 = datetime.strptime(timestamp, format_str)
-		time2 = datetime.strptime(self.latest_timestamp, format_str)
-
-		# 检查是否同一天
-		same_day = time1.date() == time2.date()
-
-		# 检查是否同一周
-		same_week = time1.isocalendar()[1] == time2.isocalendar()[1] and time1.isocalendar()[0] == time2.isocalendar()[0]
-
-		# 检查是否同一个月
-		same_month = time1.month == time2.month and time1.year == time2.year
-
-		usage_diff = reading - self.latest_reading
-
-		# 对日 周 月 有相似的逻辑
-		# 如果最新的读数没有跨越时间周期，则累计在最新用量中
-		# 如果跨越时间周期了，则将之前的最新用量存入历史用量，然后最新用量重新计数
-		if same_day:
-			self.latest_day_usage += usage_diff
 		else:
-			self.day_usage_history.append(self.latest_day_usage)
-			self.latest_day_usage = usage_diff
+			self.day_latest_reading = reading
 
-		if same_week:
-			self.latest_week_usage += usage_diff
-		else:
-			self.week_usage_history.append(self.latest_week_usage)
-			self.latest_week_usage = usage_diff
-		
+		self.current_day_timestamp = timestamp
 
-		if same_month:
-			self.latest_month_usage += usage_diff
-		else:
-			self.month_usage_history.append(self.latest_month_usage)
-			self.latest_month_usage = usage_diff
 
-		self.latest_reading = reading
-		self.latest_timestamp = timestamp
-		
 
 	# 获取User的数据，用于dashboard
 	def get_display_data(self):
@@ -79,12 +40,30 @@ class User:
 			"username": self.username,
 			"area": self.area,
 			"user_id": self.user_id,
-			"latest_day_usage": self.latest_day_usage,
-			"latest_week_usage": self.latest_week_usage,
-			"latest_month_usage": self.latest_month_usage,
 			"day_usage_history": list(self.day_usage_history),
 			"week_usage_history": list(self.week_usage_history),
 			"month_usage_history": list(self.month_usage_history),
 		}
 		return res
 		
+	# 每日结束后，进行批量处理
+	def batch_job(self):
+
+		self.day_usage_history.append([self.current_day_timestamp, self.day_latest_reading - self.day_first_reading])
+		# 是否跨周
+		current_day = datetime.strptime(self.current_day_timestamp, "%Y-%m-%d")
+		if len(self.week_usage_history) == 0 or current_day.isocalendar()[1] != datetime.strptime(self.week_usage_history[-1][0], "%Y-%m-%d").isocalendar()[1]:
+			self.week_usage_history.append([self.current_day_timestamp, self.day_latest_reading - self.day_first_reading])
+		else:
+			self.week_usage_history[-1][1] += self.day_latest_reading - self.day_first_reading
+
+		# 是否跨月
+		if len(self.month_usage_history) == 0 or current_day.month != datetime.strptime(self.month_usage_history[-1][0], "%Y-%m-%d").month:
+			self.month_usage_history.append([self.current_day_timestamp, self.day_latest_reading - self.day_first_reading])
+		else:
+			self.month_usage_history[-1][1] += self.day_latest_reading - self.day_first_reading
+		
+		# 重置
+		self.day_first_reading = self.day_latest_reading
+		self.day_latest_reading = None
+		self.current_day_timestamp = None

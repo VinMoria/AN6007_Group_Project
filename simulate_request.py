@@ -3,9 +3,10 @@ import requests
 from datetime import datetime, timedelta
 
 user_data_list = []
-server_ip = "18.136.213.100:33468"
+server_ip = "127.0.0.1:5000"
 send_reading_url = f"http://{server_ip}/meter/sendReading"
 register_url = f"http://{server_ip}/user/register"
+batch_url = f"http://{server_ip}/batch"
 
 
 def send_meter_data(user_id, reading, timestamp):
@@ -33,17 +34,24 @@ def send_register(username, area):
 
 	try:
 		response = requests.post(register_url, json=params)
-		if response.status_code == 200:
+		receive_data = response.json()
+		if receive_data['status'] == 'success':
 			print(f"Successfully sent data: {username},{area}")
-			receive_data = response.json()
 			user_id = receive_data['user_id']
 			user_data_list.append([user_id, 0])
 			print(user_data_list)
-
 		else:
 			print(f"Failed to send data for {username},{area}")
 	except Exception as e:
 		print(f"Error sending data for {username},{area},{e}")
+
+def send_batch():
+	response = requests.get(batch_url)
+	receive_data = response.json()
+	if receive_data['status'] == 'success':
+		print("Successfully sent batch")
+	else:
+		print(f"Failed: {receive_data['message']}")
 
 
 # run the simulation
@@ -53,7 +61,14 @@ def meter_simulation(time_start_str, time_end_str):
 	time_end = datetime.strptime(time_end_str, format_str)
 
 	new_time = time_start
+	last_day = new_time.day  # 记录当前日期
+	
 	while new_time <= time_end:
+		# 检查是否跨天
+		if new_time.day != last_day:
+			send_batch()
+			last_day = new_time.day
+			
 		running_range_start = new_time.replace(
 			hour=1, minute=0, second=0, microsecond=0)
 		runnint_range_end = new_time.replace(
@@ -85,5 +100,5 @@ if __name__ == "__main__":
 	# send_register("Jack Martin", "Orchard Road")
 
 	# 发送读数
-	meter_simulation("2024-11-25 05:00:00", "2025-01-02 22:00:00")
+	meter_simulation("2024-11-25 05:00:00", "2024-12-01 22:00:00")
 	# meter_simulation("2025-02-09 05:00:00", "2025-02-10 22:00:00")
