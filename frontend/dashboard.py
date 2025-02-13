@@ -87,26 +87,22 @@ def user_chart(n_clicks, user_id, timeframe):
     
     if timeframe == "day":
         usage_history = data["day_usage_history"]
-        latest_usage = data["latest_day_usage"]
         time_range = pd.date_range(start=start_date, end=end_date, freq='D')     
     elif timeframe == "week":
         usage_history = data["week_usage_history"]
-        latest_usage = data["latest_week_usage"]
         time_range = pd.date_range(start=start_date, end=end_date, freq='W')
     elif timeframe == "month":
         usage_history = data["month_usage_history"]
-        latest_usage = data["latest_month_usage"]
         time_range = pd.date_range(start=start_date, end=end_date, freq='M')   
     else:
         return px.line(title="Invalid Timeframe")
     
     df = pd.DataFrame({timeframe: time_range[:len(usage_history)], "usage": usage_history})
-    df_latest = pd.DataFrame({timeframe: [time_range[-1]], "usage": latest_usage})
-    df = pd.concat([df, df_latest], ignore_index=True)
+    df = pd.concat([df], ignore_index=True)
 
     plot = px.bar(df, x=timeframe, y="usage", title=f"{data['username']}'s Electricity Consumption")
     # history data uses light blue, the latest data uses dark blue
-    plot.update_traces(marker_color=["#ADD8E6"] * len(usage_history) + ["#4682B4"])
+    plot.update_traces(marker_color=["#ADD8E6"] * len(usage_history))
     # asked gpt how to display data in this following style
     plot.update_traces(hovertemplate="<b>Time: </b>%{x}<br><b>Usage: </b>%{y}<br><extra></extra>")
     return plot
