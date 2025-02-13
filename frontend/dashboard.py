@@ -75,8 +75,6 @@ app.layout = html.Div([
     Input("user_timeframe", "value")
 )
 def user_chart(n_clicks, user_id, timeframe):
-    start_date = "2024-11-25"
-    end_date = "2025-01-02"
     if not user_id:
         return px.line(title="Input User ID")
 
@@ -88,23 +86,22 @@ def user_chart(n_clicks, user_id, timeframe):
     
     if timeframe == "day":
         usage_history = data["day_usage_history"]
-        time_range = pd.date_range(start=start_date, end=end_date, freq='D')     
     elif timeframe == "week":
         usage_history = data["week_usage_history"]
-        time_range = pd.date_range(start=start_date, end=end_date, freq='W')
     elif timeframe == "month":
         usage_history = data["month_usage_history"]
-        time_range = pd.date_range(start=start_date, end=end_date, freq='M')   
     else:
         return px.line(title="Invalid Timeframe")
     
-    df = pd.DataFrame({timeframe: time_range[:len(usage_history)], "usage": usage_history})
-    df = pd.concat([df], ignore_index=True)
-
-    plot = px.bar(df, x=timeframe, y="usage", title=f"{data['username']}'s Electricity Consumption")
-    # history data uses light blue, the latest data uses dark blue
-    plot.update_traces(marker_color=["#ADD8E6"] * len(usage_history))
-    # asked gpt how to display data in this following style
+    # 将二维数组转换为DataFrame
+    df = pd.DataFrame(usage_history, columns=["date", "usage"])
+    # 将日期字符串转换为datetime类型
+    df["date"] = pd.to_datetime(df["date"])
+    
+    plot = px.bar(df, x="date", y="usage", title=f"{data['username']}'s Electricity Consumption")
+    # history data uses light blue
+    plot.update_traces(marker_color="#ADD8E6")
+    # 保持原有的hover样式
     plot.update_traces(hovertemplate="<b>Time: </b>%{x}<br><b>Usage: </b>%{y}<br><extra></extra>")
     return plot
 
