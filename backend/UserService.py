@@ -29,7 +29,7 @@ class UserService:
 		# 创建用户对象
 		new_user = User(username, area, new_user_id)
 		self.user_dict[new_user_id] = new_user
-		print(self.user_dict)
+		# print(self.user_dict)
 
 		# 注册在目录中
 		self.user_id_set.add(new_user_id)
@@ -70,7 +70,7 @@ class UserService:
 			backup_dir.mkdir(exist_ok=True)
 			# 生成带时间戳的文件名
 			now = datetime.now()
-			filename = backup_dir / f"daily_raw_data_{now.strftime('%Y-%m-%d')}.csv"
+			filename = backup_dir / f"daily_raw_data_{now.strftime('%Y-%m-%d_%H-%M-%S')}.csv"
 			# 保存为CSV文件
 			df.to_csv(filename, index=False)
 			# 清空daily_daily_raw_data

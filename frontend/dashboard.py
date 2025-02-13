@@ -8,11 +8,12 @@ import os
 # use config.json to get the url
 # config_path = os.getenv("CONFIG_PATH", "config.json")
 
-# with open("config.json", "r") as f:
-#     config = json.load(f)
-# url = config["backend_url"]
+with open("config.json", "r") as f:
+    config = json.load(f)
+url = config["backend_url"]
 # 下面这个只用于我测试这个dashboard，实际应该是上面三行代码取消注释，下面这行url注释掉
-url = "http://127.0.0.1:33468" # test
+# 别用这个了，你测试的时候也用config，就是python运行的话要先cd frontend
+# url = "http://127.0.0.1:33468" # test
 app = dash.Dash(__name__)
 
 

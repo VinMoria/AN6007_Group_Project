@@ -48,7 +48,7 @@ if user_service is None:
 
 app = Flask(__name__)
 
-# 创建定时任务
+# 定时保存UserService，用于恢复
 scheduler = BackgroundScheduler()
 scheduler.add_job(func=store_data, args=[user_service], trigger="interval", seconds=5)
 scheduler.start()

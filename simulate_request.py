@@ -1,6 +1,7 @@
 import random
 import requests
 from datetime import datetime, timedelta
+import time
 
 user_data_list = []
 server_ip = "127.0.0.1:5000"
@@ -68,6 +69,7 @@ def meter_simulation(time_start_str, time_end_str):
 		if new_time.day != last_day:
 			send_batch()
 			last_day = new_time.day
+			time.sleep(1)
 			
 		running_range_start = new_time.replace(
 			hour=1, minute=0, second=0, microsecond=0)

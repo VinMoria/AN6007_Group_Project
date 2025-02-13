@@ -11,9 +11,5 @@ docker run -d -p 33467:8080 dashboard
 
 ## TODO
 用户数据计算推迟到批处理
-- batch API
-- batch job
 
 日志
-
-数据恢复 UserSerice
