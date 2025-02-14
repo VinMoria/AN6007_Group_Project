@@ -40,19 +40,30 @@ def send_register(username, area):
 			print(f"Successfully sent data: {username},{area}")
 			user_id = receive_data['user_id']
 			user_data_list.append([user_id, 0])
-			print(user_data_list)
+			# print(user_data_list)
 		else:
 			print(f"Failed to send data for {username},{area}")
 	except Exception as e:
 		print(f"Error sending data for {username},{area},{e}")
 
 def send_batch():
-	response = requests.get(batch_url)
-	receive_data = response.json()
-	if receive_data['status'] == 'success':
-		print("Successfully sent batch")
-	else:
-		print(f"Failed: {receive_data['message']}")
+	try:
+		response = requests.get(batch_url)
+		# 检查响应状态码
+		if response.status_code == 200:
+			# 检查响应内容类型是否为zip
+			if response.headers.get('Content-Type') == 'application/zip':
+				print("Successfully sent batch")
+				return True
+			else:
+				print("Failed: Unexpected response content type")
+				return False
+		else:
+			print(f"Failed: HTTP {response.status_code}")
+			return False
+	except Exception as e:
+		print(f"Error sending batch: {e}")
+		return False
 
 
 # run the simulation
@@ -102,5 +113,5 @@ if __name__ == "__main__":
 	# send_register("Jack Martin", "Orchard Road")
 
 	# 发送读数
-	meter_simulation("2024-10-25 05:00:00", "2025-02-26 22:00:00")
+	meter_simulation("2025-01-25 05:00:00", "2025-02-28 22:00:00")
 	# meter_simulation("2025-02-09 05:00:00", "2025-02-10 22:00:00")

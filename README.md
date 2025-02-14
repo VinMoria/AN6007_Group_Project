@@ -10,6 +10,8 @@ docker run -d -p 33467:8080 dashboard
 
 
 ## TODO
-用户数据计算推迟到批处理
+批处理时，返回记录一日读数的CSV和api的log文件
+
+定义一个api返回月度数据
 
 日志

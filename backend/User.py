@@ -48,7 +48,8 @@ class User:
 		
 	# 每日结束后，进行批量处理
 	def batch_job(self):
-
+		if self.day_latest_reading is None:
+			return
 		self.day_usage_history.append([self.current_day_timestamp, self.day_latest_reading - self.day_first_reading])
 		# 是否跨周
 		current_day = datetime.strptime(self.current_day_timestamp, "%Y-%m-%d")
