@@ -31,15 +31,6 @@ memory_handler = MemoryHandler(
 
 logger.addHandler(memory_handler)
 
-# # 添加一个定时刷新任务
-# def flush_logs():
-# 	memory_handler.flush()
-# 	# 每5秒刷新一次
-# 	Timer(5.0, flush_logs).start()
-
-# # 启动定时刷新
-# flush_logs()
-
 # 存储数据
 def store_data(user_service):
 	# 确保backup目录存在
