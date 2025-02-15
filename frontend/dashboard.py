@@ -25,9 +25,11 @@ user_layout = html.Div([
     dcc.RadioItems(
         id="user_timeframe",
         options=[
+            {"label": "Detail", "value": "detail"},
             {"label": "Daily", "value": "day"},
             {"label": "Weekly", "value": "week"},
-            {"label": "Monthly", "value": "month"},
+            {"label": "Monthly", "value": "month"}
+
         ],
         value="day",
         inline=True,
@@ -90,6 +92,8 @@ def user_chart(n_clicks, user_id, timeframe):
         usage_history = data["week_usage_history"]
     elif timeframe == "month":
         usage_history = data["month_usage_history"]
+    elif timeframe == "detail":
+        usage_history = data["day_detail_usage_history"]
     else:
         return px.line(title="Invalid Timeframe")
     

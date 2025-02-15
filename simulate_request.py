@@ -74,26 +74,29 @@ def meter_simulation(time_start_str, time_end_str):
 
 	new_time = time_start
 	last_day = new_time.day  # 记录当前日期
+
+	with open("simulate_request.txt", "w") as f:
 	
-	while new_time <= time_end:
-		# 检查是否跨天
-		if new_time.day != last_day:
-			send_batch()
-			last_day = new_time.day
-			# time.sleep(1)
-			
-		running_range_start = new_time.replace(
-			hour=1, minute=0, second=0, microsecond=0)
-		runnint_range_end = new_time.replace(
-			hour=23, minute=00, second=00, microsecond=0)
-		if running_range_start <= new_time <= runnint_range_end:
-			for user_data in user_data_list:
-				user_id = user_data[0]
-				reading = user_data[1] + random.randint(200, 600)
-				timestamp = new_time.strftime("%Y-%m-%d %H:%M:%S")
-				user_data[1] = reading
-				send_meter_data(user_id, reading, timestamp)
-		new_time = new_time + timedelta(hours=5)
+		while new_time <= time_end:
+			# 检查是否跨天
+			if new_time.day != last_day:
+				send_batch()
+				last_day = new_time.day
+				# time.sleep(1)
+				
+			running_range_start = new_time.replace(
+				hour=1, minute=0, second=0, microsecond=0)
+			runnint_range_end = new_time.replace(
+				hour=23, minute=00, second=00, microsecond=0)
+			if running_range_start <= new_time <= runnint_range_end:
+				for user_data in user_data_list:
+					user_id = user_data[0]
+					reading = user_data[1] + random.randint(200, 600)
+					timestamp = new_time.strftime("%Y-%m-%d %H:%M:%S")
+					user_data[1] = reading
+					send_meter_data(user_id, reading, timestamp)
+					f.write(f"{user_id},{reading},{timestamp}\n")
+			new_time = new_time + timedelta(hours=1)
 		# time.sleep(0.2)
 	print(new_time)
 
@@ -113,5 +116,5 @@ if __name__ == "__main__":
 	# send_register("Jack Martin", "Orchard Road")
 
 	# 发送读数
-	meter_simulation("2025-01-25 05:00:00", "2025-02-28 22:00:00")
+	meter_simulation("2024-11-25 05:00:00", "2025-02-28 22:00:00")
 	# meter_simulation("2025-02-09 05:00:00", "2025-02-10 22:00:00")

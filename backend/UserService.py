@@ -46,9 +46,7 @@ class UserService:
 
 	def receive_reading(self, user_id, timestamp, reading):
 		self.current_date = timestamp[:10]
-		# 将时间戳字符串转换为日期格式（保留年月日部分）
-		date_str = timestamp[:10]  # 截取前10个字符"YYYY-MM-DD"
-		self.user_dict[user_id].receive_reading(date_str, reading)
+		self.user_dict[user_id].receive_reading(timestamp, reading)
 		# 记录读数原始数据
 		self.daily_raw_data.append((
                     user_id,
@@ -96,7 +94,7 @@ class UserService:
 			user_month_usage = []
 			for user_id in self.user_dict:
 				user_month_usage.append([user_id, self.user_dict[user_id].month_usage_history[-1][0][:7],self.user_dict[user_id].month_usage_history[-1][1]])
-			df = pd.DataFrame(user_month_usage, columns=['user_id', 'timestamp', 'reading'])
+			df = pd.DataFrame(user_month_usage, columns=['user_id', 'timestamp', 'usage'])
 			# 存储月度数据
 			filename = record_dir / f"monthly_usage_data_{self.current_date}.csv"
 			df.to_csv(filename, index=False)

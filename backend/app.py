@@ -43,6 +43,7 @@ def load_data():
 	user_service_file = next(backup_path.glob("user_service_*.pkl"))
 	with open(user_service_file, 'rb') as f:
 		user_service = pickle.load(f)
+	print(f"load_data success")
 
 	return user_service
 
@@ -150,34 +151,34 @@ def get_user_data():
 		return jsonify({'status': 'error', 'message': str(e)})
 	
 
-# 允许管理员获取csv的原始数据
-@app.route('/admin/getRaw',methods=["GET"])
-def admin_get_raw_():
-	global in_batch_job
-	logger.info("Received request at /admin/getRaw")
-	if in_batch_job:
-		logger.warning("System is in batch job mode, rejecting request")
-		return jsonify({'status': 'error', 'message': 'System is maintaining, please try again later.'})
+# # 允许管理员获取csv的原始数据
+# @app.route('/admin/getRaw',methods=["GET"])
+# def admin_get_raw_():
+# 	global in_batch_job
+# 	logger.info("Received request at /admin/getRaw")
+# 	if in_batch_job:
+# 		logger.warning("System is in batch job mode, rejecting request")
+# 		return jsonify({'status': 'error', 'message': 'System is maintaining, please try again later.'})
 
-	try:
-		# 使用 BytesIO 替代 StringIO
-		buffer = BytesIO()
-		user_service.raw_df.to_csv(buffer, index=False)
-		logger.info("Successfully prepared raw data CSV")
+# 	try:
+# 		# 使用 BytesIO 替代 StringIO
+# 		buffer = BytesIO()
+# 		user_service.raw_df.to_csv(buffer, index=False)
+# 		logger.info("Successfully prepared raw data CSV")
 		
-		# 将指针移到开始
-		buffer.seek(0)
+# 		# 将指针移到开始
+# 		buffer.seek(0)
 		
-		return send_file(
-			buffer,
-			mimetype='text/csv',
-			as_attachment=True,
-			download_name='raw_data.csv'
-		)
+# 		return send_file(
+# 			buffer,
+# 			mimetype='text/csv',
+# 			as_attachment=True,
+# 			download_name='raw_data.csv'
+# 		)
 	
-	except Exception as e:
-		logger.error(f"Error in admin_get_raw_: {str(e)}")
-		return jsonify({'status': 'error', 'message': str(e)})
+# 	except Exception as e:
+# 		logger.error(f"Error in admin_get_raw_: {str(e)}")
+# 		return jsonify({'status': 'error', 'message': str(e)})
 	
 # 批处理
 @app.route('/batch', methods=["GET"])
