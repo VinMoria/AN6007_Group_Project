@@ -9,27 +9,14 @@ import zipfile
 import logging
 from logging.handlers import MemoryHandler
 from threading import Timer
+from SimpleLog import SimpleLog
 
 
 # 配置日志
-logger = logging.getLogger()
-logger.setLevel(logging.INFO)
+logger = SimpleLog("records")
 
 # 确保records目录存在
 Path("records").mkdir(exist_ok=True)
-
-# 文件处理器
-file_handler = logging.FileHandler('records/app.log')
-file_handler.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
-
-# 内存缓冲区处理器
-memory_handler = MemoryHandler(
-	capacity=10000,  # 增大缓冲区大小，因为刷新间隔变长
-	flushLevel=logging.ERROR,  # 遇到ERROR级别时仍然立即刷新
-	target=file_handler
-)
-
-logger.addHandler(memory_handler)
 
 # 存储数据
 def store_data(user_service):
@@ -204,8 +191,7 @@ def batch():
 		in_batch_job = True
 		logger.info("Starting batch job")
 		user_service.batch_job()
-		
-		memory_handler.flush()
+		logger.flush()
 		# 压缩records目录
 		record_dir = Path("records")
 		record_dir.mkdir(exist_ok=True)
@@ -220,7 +206,7 @@ def batch():
 		buffer.seek(0)
 		
 		# 清空records目录
-		for file in record_dir.glob("*.csv"):
+		for file in record_dir.glob("*"):
 			file.unlink()
 
 		in_batch_job = False
@@ -231,6 +217,7 @@ def batch():
 			as_attachment=True,
 			download_name='records.zip'
 		)
+	
 	
 	except Exception as e:
 		logger.error(f"Error in batch: {str(e)}")
