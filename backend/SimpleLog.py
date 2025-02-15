@@ -1,5 +1,7 @@
 import time
 import os
+
+
 class SimpleLog:
     def __init__(self, path):
         self.memory_list = []

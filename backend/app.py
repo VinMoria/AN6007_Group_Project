@@ -6,9 +6,6 @@ from pathlib import Path
 import pickle
 from datetime import datetime
 import zipfile
-import logging
-from logging.handlers import MemoryHandler
-from threading import Timer
 from SimpleLog import SimpleLog
 
 

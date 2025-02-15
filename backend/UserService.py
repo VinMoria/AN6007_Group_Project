@@ -2,6 +2,7 @@ from User import User
 import pandas as pd
 from datetime import datetime, timedelta
 from pathlib import Path
+from concurrent.futures import ThreadPoolExecutor
 
 
 class UserService:
@@ -61,10 +62,15 @@ class UserService:
 
 	# 一天结束后的批量处理
 	def batch_job(self):
-		# 计算User的用电量
-		for user_id in self.user_dict:
-			self.user_dict[user_id].batch_job()
-
+		# 使用ThreadPoolExecutor进行多线程处理
+		with ThreadPoolExecutor() as executor:
+			# 为每个用户的batch_job创建任务
+			futures = [executor.submit(self.user_dict[user_id].batch_job) 
+					  for user_id in self.user_dict]
+			
+			# 等待所有任务完成
+			for future in futures:
+				future.result()
 
 		record_dir = Path("records")
 		record_dir.mkdir(exist_ok=True)
