@@ -3,5 +3,4 @@ flask
 requests
 pandas
 plotly
-json
 gunicorn
