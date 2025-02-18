@@ -35,8 +35,10 @@ user_layout = html.Div([
         inline=True,
     ),
     html.Button("Fetch Data", id="fetch_user_data", n_clicks=0),
+    html.Div(id="user_error_message", style={'color': 'red'}),
     dcc.Graph(id="user_chart")
 ])
+
 
 
 # for user to register
@@ -69,45 +71,61 @@ app.layout = html.Div([
 
 
 
-# User page callback
+# callback for user get_data
 @app.callback(
     Output("user_chart", "figure"),
+    Output("user_error_message", "children"),
     Input("fetch_user_data", "n_clicks"),
     Input("user_id", "value"),
     Input("user_timeframe", "value")
 )
 def user_chart(n_clicks, user_id, timeframe):
     if not user_id:
-        return px.line(title="Input User ID")
+        return ({}, "Please enter a valid User ID")
 
     response = requests.get(f"{url}/user/getData", params={"user_id": user_id})
     if response.status_code != 200:
         return px.line(title="Failed to get data.")
     
     data = response.json()
-    
+    # Check that returned data contains valid user information
+    if "username" not in data or not data["username"]:
+        return ({}, "Please enter a valid User ID")
+
+    # get date and electricity usage directly from the data
     if timeframe == "day":
         usage_history = data["day_usage_history"]
+        date_range = [x[0] for x in usage_history]
+        usage_values = [x[1] for x in usage_history]
     elif timeframe == "week":
         usage_history = data["week_usage_history"]
+        date_range = [x[0] for x in usage_history]
+        usage_values = [x[1] for x in usage_history]
     elif timeframe == "month":
         usage_history = data["month_usage_history"]
+        date_range = [x[0] for x in usage_history]
+        usage_values = [x[1] for x in usage_history]
     elif timeframe == "detail":
         usage_history = data["day_detail_usage_history"]
+        date_range = [x[0] for x in usage_history]
+        usage_values = [x[1] for x in usage_history]
     else:
         return px.line(title="Invalid Timeframe")
-    
-    # 将二维数组转换为DataFrame
-    df = pd.DataFrame(usage_history, columns=["date", "usage"])
-    
+
+    df = pd.DataFrame({"date": date_range, "usage": usage_values})
     plot = px.bar(df, x="date", y="usage", title=f"{data['username']}'s Electricity Consumption")
-    # history data uses light blue
     plot.update_traces(marker_color="#ADD8E6")
-    # 保持原有的hover样式
     plot.update_traces(hovertemplate="<b>Time: </b>%{x}<br><b>Usage: </b>%{y}<br><extra></extra>")
-    # 设置X轴为分类轴，保持字符串格式
-    plot.update_xaxes(type='category')
-    return plot
+
+    # make X-axis handle the date display automatically
+    plot.update_xaxes(type='category') # treat dates as categories to make sure all dates are displayed
+
+    plot.update_layout(title=f"{data['username']}'s Electricity Consumption")
+
+    return plot, ""
+
+
+
 
 
 
