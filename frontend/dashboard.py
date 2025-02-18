@@ -5,15 +5,9 @@ import plotly.express as px
 import json
 import os
 
-# use config.json to get the url
-# config_path = os.getenv("CONFIG_PATH", "config.json")
-
 with open("config.json", "r") as f:
     config = json.load(f)
 url = config["backend_url"]
-# 下面这个只用于我测试这个dashboard，实际应该是上面三行代码取消注释，下面这行url注释掉
-# 别用这个了，你测试的时候也用config，就是python运行的话要先cd frontend
-# url = "http://127.0.0.1:33468" # test
 app = dash.Dash(__name__)
 
 
@@ -125,10 +119,6 @@ def user_chart(n_clicks, user_id, timeframe):
     return plot, ""
 
 
-
-
-
-
 # callback for register
 @app.callback(
     Output("register_status", "children"),
@@ -152,7 +142,7 @@ def register_user(n_clicks, username, area):
         return "Server error. Please try again later."
     return ""
 
-
+server = app.server
 
 if __name__ == "__main__":
-    app.run_server(debug=True)
+    app.run_server(host='0.0.0.0', port=8050)

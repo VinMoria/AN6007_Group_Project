@@ -17,9 +17,6 @@ class UserService:
                     # "00000001":user_object,
 		}
 
-		# self.user_id_set = set()
-		# self.area_set = set()
-
 		# 存储一日的原始数据，batch job时储存文件
 		self.daily_raw_data = []
 
@@ -34,10 +31,6 @@ class UserService:
 		new_user = User(username, area, new_user_id)
 		self.user_dict[new_user_id] = new_user
 		# print(self.user_dict)
-
-		# # 注册在目录中
-		# self.user_id_set.add(new_user_id)
-		# self.area_set.add(area)
 
 		# 返回分配的用户ID
 		return new_user_id
@@ -60,20 +53,18 @@ class UserService:
 
 	# 一天结束后的批量处理
 	def batch_job(self):
-		# 使用ThreadPoolExecutor进行多线程处理
+		# 多线程处理 User的batch_job
 		with ThreadPoolExecutor() as executor:
-			# 为每个用户的batch_job创建任务
 			futures = [executor.submit(self.user_dict[user_id].batch_job) 
 					  for user_id in self.user_dict]
 			
-			# 等待所有任务完成
 			for future in futures:
 				future.result()
 
 		record_dir = Path("records")
 		record_dir.mkdir(exist_ok=True)
 
-		# 存储原始数据
+		# 存储日原始数据
 		if self.daily_raw_data:
 			# 将daily_raw_data转换为DataFrame
 			df = pd.DataFrame(self.daily_raw_data, columns=['user_id', 'timestamp', 'reading'])
@@ -98,69 +89,3 @@ class UserService:
 			# 存储月度数据
 			filename = record_dir / f"monthly_usage_data_{self.current_date}.csv"
 			df.to_csv(filename, index=False)
-
-	# # 管理员查询
-	# def admin_query(self, start_time, end_time, area, period_type):
-	# 	if area == "all":
-	# 		filtered_df = self.raw_df[self.raw_df['timestamp'].between(start_time, end_time)]
-	# 	else:
-	# 		filtered_df = self.raw_df[self.raw_df['area'] == area]
-	# 		filtered_df = filtered_df[filtered_df['timestamp'].between(start_time, end_time)]
-
-	# 	# 确保 timestamp 列是 datetime 格式
-	# 	filtered_df['timestamp'] = pd.to_datetime(filtered_df['timestamp'])
-
-	# 	# 一次性完成分组、计算用电量和汇总
-	# 	consumption_df = (filtered_df.groupby([pd.Grouper(key='timestamp', freq=period_type), 'user_id'])['reading']
-    #                 .agg(['max', 'min'])
-    #                 .assign(consumption=lambda x: x['max'] - x['min'])
-    #                 .reset_index()
-    #                 .groupby('timestamp')['consumption']
-    #                 .sum())
-
-	# 	return consumption_df.tolist()
-
-	# # 存储数据
-	# def store_data(self):
-	# 	# 确保backup目录存在
-	# 	backup_dir = Path("backup")
-	# 	backup_dir.mkdir(exist_ok=True)
-
-	# 	# 删除旧的备份文件
-	# 	for old_file in backup_dir.glob("daily_raw_data_*.csv"):
-	# 		old_file.unlink()
-	# 	for old_file in backup_dir.glob("user_dict_*.pkl"):
-	# 		old_file.unlink()
-
-	# 	# 将raw_df存储到csv文件中，按当前时间命名
-	# 	now = datetime.now()
-	# 	filename = backup_dir / f"daily_raw_data_{now.strftime('%Y-%m-%d_%H-%M-%S')}.csv"
-	# 	self.raw_df.to_csv(filename, index=False)
-
-	# 	# 将user_dict直接存储为二进制文件
-	# 	filename = backup_dir / f"user_dict_{now.strftime('%Y-%m-%d_%H-%M-%S')}.pkl"
-	# 	with open(filename, 'wb') as f:
-	# 		pickle.dump(self.user_dict, f)
-
-	# 	print(f"store_data success on {now.strftime('%Y-%m-%d %H:%M:%S')}")
-
-	# # 加载备份数据
-	# def load_data(self):
-	# 	# 检查backup目录是否存在且有文件
-	# 	backup_path = Path("backup")
-	# 	if not backup_path.exists() or not any(backup_path.iterdir()):
-	# 		return
-
-	# 	# 直接获取唯一的数据文件
-	# 	daily_raw_data_file = next(backup_path.glob("daily_raw_data_*.csv"))
-	# 	self.raw_df = pd.read_csv(daily_raw_data_file)
-
-	# 	# 直接获取唯一的用户字典文件
-	# 	user_dict_file = next(backup_path.glob("user_dict_*.pkl"))
-	# 	with open(user_dict_file, 'rb') as f:
-	# 		self.user_dict = pickle.load(f)
-
-	# 	# 更新current_id
-	# 	self.current_id = len(self.user_dict)
-	# 	print(f"load_data success on {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-	# 	return

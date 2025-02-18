@@ -8,13 +8,6 @@ class User:
 		self.area = area
 		self.user_id = user_id
 
-		# # 记录当前是哪一天
-		# day_timestamp = None
-
-		# # 记录一天最早和最晚的读数
-		# self.day_first_reading = None
-		# self.day_latest_reading = None
-
 		# 记录一天的所有读数
 		self.day_readings = []
 
@@ -28,15 +21,6 @@ class User:
 	# 读数只记录一天最早和最晚的记录
 	def receive_reading(self, timestamp, reading):
 		self.day_readings.append([timestamp, reading])
-		# if self.day_first_reading is None:
-		# 	self.day_first_reading = reading
-		# 	self.day_latest_reading = reading
-
-		# else:
-		# 	self.day_latest_reading = reading
-
-		# day_timestamp = timestamp
-
 
 
 	# 获取User的数据，用于dashboard
