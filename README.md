@@ -39,4 +39,3 @@ Then run the following command:
 pip install requests
 python simulate_request.py
 ```
-
