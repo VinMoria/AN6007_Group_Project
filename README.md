@@ -40,8 +40,3 @@ pip install requests
 python simulate_request.py
 ```
 
-
-docker run -d -v /config.json:/app/config.json -p 33467:8050 xyw924/an6007-group-project-dash:latest
-
-
-
