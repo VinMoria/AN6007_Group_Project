@@ -29,8 +29,8 @@ Please prepare the config.json file with the following content:
 ```
 Then run the following command:
 ```shell
-docker pull xyw924/an6007-group-project-dashboard:latest
-docker run -d -v [your_config_file_path]:/app/config.json -p 33467:8050 xyw924/an6007-group-project-dashboard:latest
+docker pull xyw924/an6007-group-project-dash:latest
+docker run -d -v [your_config_file_path]:/app/config.json -p 33467:8050 xyw924/an6007-group-project-dash:latest
 ```
 # Simulate Request
 If you want to use the **simulate_request.py** to simulate the request to inject data into the system, please first change the **server_ip** in the **simulate_request.py** file to the IP of the API server.
@@ -39,6 +39,9 @@ Then run the following command:
 pip install requests
 python simulate_request.py
 ```
+
+
+docker run -d -v /config.json:/app/config.json -p 33467:8050 xyw924/an6007-group-project-dash:latest
 
 
 
