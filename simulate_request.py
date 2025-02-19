@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 import time
 
 user_data_list = []
-server_ip = "127.0.0.1:33468"
+server_ip = "18.136.213.100:33468"
 send_reading_url = f"http://{server_ip}/meter/sendReading"
 register_url = f"http://{server_ip}/user/register"
 batch_url = f"http://{server_ip}/batch"
