@@ -12,6 +12,7 @@ cd frontend
 pip install -r requirements.txt
 python dashboard.py
 ```
+Then visit the dashboard at: http://127.0.0.1:8050
 
 # Docker Run
 ## Start the API server:
@@ -32,6 +33,7 @@ Then run the following command:
 docker pull xyw924/an6007-group-project-dash:latest
 docker run -d -v [your_config_file_path]:/app/config.json -p 33467:8050 xyw924/an6007-group-project-dash:latest
 ```
+Then visit the dashboard at: http://[your_dashboard_server_ip]:33467
 # Simulate Request
 If you want to use the **simulate_request.py** to simulate the request to inject data into the system, please first change the **server_ip** in the **simulate_request.py** file to the IP of the API server.
 Then run the following command:
